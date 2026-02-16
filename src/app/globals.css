@@ -1,0 +1,36 @@
+:root {
+  --color-gold: #D4AF37;
+  --color-deep-blue: #0A192F;
+  --color-pure-white: #FFFFFF;
+  --color-obsidian: #050505;
+  --color-text-primary: var(--color-pure-white);
+  --color-text-secondary: var(--color-gold);
+  --font-serif: var(--font-cinzel), serif;
+  --font-sans: var(--font-inter), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--color-obsidian);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: var(--color-gold);
+  font-weight: 400;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
