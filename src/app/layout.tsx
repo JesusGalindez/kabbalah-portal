@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Cinzel, Inter } from 'next/font/google';
 import AudioEngine from '@/components/AudioEngine';
+import SpiritualChat from '@/components/SpiritualChat';
 import './globals.css';
 
 const cinzel = Cinzel({
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${cinzel.variable} ${inter.variable} antialiased`}>
         <AudioEngine />
+        <SpiritualChat />
         {children}
       </body>
     </html>
