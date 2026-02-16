@@ -1,14 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
+
 // Global Error must define its own html and body tags since it replaces the root layout
 import styles from './error.module.css';
 
 export default function GlobalError({
+    error,
     reset,
 }: {
     error: Error & { digest?: string };
     reset: () => void;
 }) {
+    useEffect(() => {
+        console.error(error);
+    }, [error]);
+
     return (
         <html>
             <body className={styles.container}>

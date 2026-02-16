@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { Volume2, VolumeX } from 'lucide-react';
 import styles from './AudioEngine.module.css';
@@ -14,7 +14,7 @@ export default function AudioEngine() {
     const [isMuted, setIsMuted] = useState(false);
 
 
-    const initAudio = () => {
+    const initAudio = useCallback(() => {
         if (!audioContextRef.current) {
             const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
             audioContextRef.current = new AudioContextClass();
@@ -22,84 +22,20 @@ export default function AudioEngine() {
             gainNode.connect(audioContextRef.current.destination);
             gainNodeRef.current = gainNode;
         }
-    };
+    }, []);
 
-    const playSound = (freq: number) => {
-        if (!audioContextRef.current || !gainNodeRef.current) return;
-
-        // Stop existing oscillators cleanly
-        stopOscillators();
-
-        const ctx = audioContextRef.current;
-        const now = ctx.currentTime;
-        const masterGain = gainNodeRef.current;
-
-        // Master Filter (Low Pass) for softness
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, now); // Soft cutoff
-        filter.Q.value = 1;
-        filter.connect(masterGain);
-
-        // Create 3 Oscillators for a "Pad" texture
-        // 1. Root
-        // 2. Lower Octave (Warmth)
-        // 3. Perfect Fifth (Harmony)
-        const frequencies = [freq, freq * 0.5, freq * 1.5];
-        const gains = [0.15, 0.1, 0.05]; // Mix levels
-
-        frequencies.forEach((f, i) => {
-            const osc = ctx.createOscillator();
-            const oscGain = ctx.createGain();
-
-            osc.type = i === 1 ? 'triangle' : 'sine'; // Use triangle for bass warmth
-            osc.frequency.setValueAtTime(f, now);
-
-            // Detune slightly for "Chorus" effect
-            if (i === 0) osc.detune.setValueAtTime(2, now);
-            if (i === 2) osc.detune.setValueAtTime(-2, now);
-
-            // Connect graph
-            osc.connect(oscGain);
-            oscGain.connect(filter);
-
-            // Individual Envelope
-            oscGain.gain.setValueAtTime(0, now);
-            oscGain.gain.linearRampToValueAtTime(gains[i], now + 4); // Very slow attack (4s)
-
-            osc.start();
-            oscillatorsRef.current.push(osc);
-        });
-
-        // LFO for "Breathing" (Tremolo)
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        lfo.frequency.value = 0.1; // 10 seconds per breath
-        lfoGain.gain.value = 0.05; // Subtle depth
-
-        lfo.connect(masterGain.gain);
-        lfo.start();
-        oscillatorsRef.current.push(lfo);
-
-        // Master Gain Fade In
-        masterGain.gain.cancelScheduledValues(now);
-        masterGain.gain.setValueAtTime(0, now);
-        masterGain.gain.linearRampToValueAtTime(0.5, now + 4);
-    };
-
-    const stopOscillators = () => {
+    const stopOscillators = useCallback(() => {
         const ctx = audioContextRef.current;
         if (!ctx) return;
         oscillatorsRef.current.forEach(osc => {
             try {
-                // Ramp down gently before stopping
                 osc.stop(ctx.currentTime + 2);
             } catch { /* ignore */ }
         });
         oscillatorsRef.current = [];
-    };
+    }, []);
 
-    const stopSound = () => {
+    const stopSound = useCallback(() => {
         if (gainNodeRef.current && audioContextRef.current) {
             const now = audioContextRef.current.currentTime;
             gainNodeRef.current.gain.cancelScheduledValues(now);
@@ -112,42 +48,86 @@ export default function AudioEngine() {
         } else {
             stopOscillators();
         }
-    };
+    }, [stopOscillators]);
 
-    const updateFrequency = () => {
+    const playSound = useCallback((freq: number) => {
+        if (!audioContextRef.current || !gainNodeRef.current) return;
+
+        stopOscillators();
+
+        const ctx = audioContextRef.current;
+        const now = ctx.currentTime;
+        const masterGain = gainNodeRef.current;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.Q.value = 1;
+        filter.connect(masterGain);
+
+        const frequencies = [freq, freq * 0.5, freq * 1.5];
+        const gains = [0.15, 0.1, 0.05];
+
+        frequencies.forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+
+            osc.type = i === 1 ? 'triangle' : 'sine';
+            osc.frequency.setValueAtTime(f, now);
+
+            if (i === 0) osc.detune.setValueAtTime(2, now);
+            if (i === 2) osc.detune.setValueAtTime(-2, now);
+
+            osc.connect(oscGain);
+            oscGain.connect(filter);
+
+            oscGain.gain.setValueAtTime(0, now);
+            oscGain.gain.linearRampToValueAtTime(gains[i], now + 4);
+
+            osc.start();
+            oscillatorsRef.current.push(osc);
+        });
+
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 0.1;
+        lfoGain.gain.value = 0.05;
+
+        lfo.connect(masterGain.gain);
+        lfo.start();
+        oscillatorsRef.current.push(lfo);
+
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(0, now);
+        masterGain.gain.linearRampToValueAtTime(0.5, now + 4);
+    }, [stopOscillators]);
+
+    const updateFrequency = useCallback(() => {
         if (!audioContextRef.current) return;
-
-        // Frequencies logic
-        // 432 Hz = Verdict/Nature (Ceremony)
-        // 528 Hz = DNA Repair/Miracle (Dashboard)
-        // 396 Hz = Liberating Guilt (Home/Intro)
-        // 639 Hz = Connection (Daily Gate)
 
         let freq = 396;
         if (pathname === '/ceremony') freq = 432;
         if (pathname === '/dashboard') freq = 528;
-        // if (pathname === '/daily-gate') freq = 639;
 
         playSound(freq);
-    };
+    }, [pathname, playSound]);
 
     useEffect(() => {
-        // Initialize Audio Context on first user interaction (handled by toggle)
         return () => {
             stopSound();
             if (audioContextRef.current) {
                 audioContextRef.current.close();
             }
         };
-    }, []);
+    }, [stopSound]);
 
     useEffect(() => {
         if (isPlaying && !isMuted) {
             updateFrequency();
         }
-    }, [pathname, isPlaying, isMuted]);
+    }, [pathname, isPlaying, isMuted, updateFrequency]);
 
-    const toggleAudio = async () => {
+    const toggleAudio = useCallback(async () => {
         initAudio();
         if (!audioContextRef.current) return;
         if (audioContextRef.current?.state === 'suspended') {
@@ -163,7 +143,7 @@ export default function AudioEngine() {
             setIsPlaying(true);
             updateFrequency();
         }
-    };
+    }, [initAudio, isPlaying, stopSound, updateFrequency]);
 
     return (
         <button onClick={toggleAudio} className={styles.audioControl} aria-label="Toggle Sound">

@@ -1,4 +1,8 @@
 declare module 'hebcal' {
+    export interface Holiday {
+        desc: string;
+    }
+
     export class HDate {
         constructor(date: Date);
         toString(encoding?: string): string;
@@ -7,11 +11,11 @@ declare module 'hebcal' {
         getFullYear(): number;
         greg(): Date;
         getMonthName(): string;
-        static getHolidaysOnDate(hDate: HDate): unknown[];
+        static getHolidaysOnDate(hDate: HDate): Holiday[];
     }
 
     export class HebrewCalendar {
-        static getHolidaysOnDate(hDate: HDate): unknown[];
+        static getHolidaysOnDate(hDate: HDate): Holiday[];
     }
 
     export class Location {
