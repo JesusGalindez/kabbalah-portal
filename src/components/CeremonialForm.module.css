@@ -68,4 +68,15 @@
 .completion {
     color: var(--color-gold);
     font-family: var(--font-serif);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.resultDetails {
+    font-family: var(--font-sans);
+    color: var(--color-pure-white);
+    font-size: 1.2rem;
+    text-align: center;
 }
