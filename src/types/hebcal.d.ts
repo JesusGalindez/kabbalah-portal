@@ -1,11 +1,12 @@
 declare module 'hebcal' {
     export class HDate {
-        constructor(date?: Date | string | number);
-        getDate(): number;
+        constructor(date: Date);
+        toString(encoding?: string): string;
         getMonth(): number;
-        getMonthName(): string;
+        getDate(): number;
         getFullYear(): number;
-        toString(): string;
+        greg(): Date;
+        getMonthName(): string;
         static getHolidaysOnDate(hDate: HDate): any[];
     }
 

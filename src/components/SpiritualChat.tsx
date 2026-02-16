@@ -46,7 +46,7 @@ export default function SpiritualChat() {
             const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'ai', text: data.reply };
 
             setMessages(prev => [...prev, aiMsg]);
-        } catch (err) {
+        } catch {
             setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', text: "The Light is unreachable at this moment." }]);
         } finally {
             setIsLoading(false);

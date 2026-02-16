@@ -74,7 +74,7 @@ export default function CeremonialForm() {
                             className={styles.input}
                             type={questions[step].type}
                             name={questions[step].key}
-                            value={(formData as any)[questions[step].key]}
+                            value={formData[questions[step].key as keyof FormData]}
                             onChange={handleChange}
                             autoFocus
                             onKeyDown={(e) => e.key === 'Enter' && nextStep()}

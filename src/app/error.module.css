@@ -1,0 +1,55 @@
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-obsidian);
+    color: var(--color-gold);
+    text-align: center;
+    padding: 2rem;
+}
+
+.title {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: #ff4d4d;
+    /* Subtle red for error, but cohesive */
+    text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+}
+
+.subtitle {
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.errorDetails {
+    background: rgba(10, 25, 47, 0.8);
+    padding: 1rem;
+    border: 1px solid #ff4d4d;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    font-family: monospace;
+    max-width: 600px;
+    word-break: break-all;
+}
+
+.resetButton {
+    background: transparent;
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    padding: 0.8rem 2rem;
+    font-family: var(--font-serif);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+}
+
+.resetButton:hover {
+    background: var(--color-gold);
+    color: var(--color-obsidian);
+    box-shadow: 0 0 15px var(--color-gold);
+}

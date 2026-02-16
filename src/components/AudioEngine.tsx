@@ -31,7 +31,7 @@ export default function AudioEngine() {
 
     const initAudio = () => {
         if (!audioContextRef.current) {
-            const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+            const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
             audioContextRef.current = new AudioContextClass();
             const gainNode = audioContextRef.current.createGain();
             gainNode.connect(audioContextRef.current.destination);
@@ -103,14 +103,13 @@ export default function AudioEngine() {
     };
 
     const stopOscillators = () => {
-        if (!audioContextRef.current) return;
+        const ctx = audioContextRef.current;
+        if (!ctx) return;
         oscillatorsRef.current.forEach(osc => {
             try {
                 // Ramp down gently before stopping
-                // Note: Direct node manipulation here is tricky with React refs, 
-                // relying on MasterGain fade out in stopSound is safer.
-                osc.stop(audioContextRef.current.currentTime + 2);
-            } catch (e) { /* ignore */ }
+                osc.stop(ctx.currentTime + 2);
+            } catch { /* ignore */ }
         });
         oscillatorsRef.current = [];
     };
