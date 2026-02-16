@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kabbalah Portal
 
-## Getting Started
+> "The Light is infinite. Ask, and the vessel shall be filled."
 
-First, run the development server:
+A premium, transcendental web platform that merges ancient Kabbalistic wisdom with modern technology. This application guides users through a spiritual journey using ancestral algorithms, sacred geometry, and adaptive soundscapes.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔮 The Truth Engine (Data Architecture)
+- **Hebrew Date Conversion**: Precision algorithms utilizing the `hebcal` library to convert Gregorian dates to the Hebrew calendar.
+- **Tikkun Calculation**: Determines the user's Soul Correction based on astrological nodes and Kabbalistic zodiac signs.
+- **Wisdom Database**: (Planned) PostgreSQL schema for storing the 72 Names of God and zodiac data.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 👁️ User Experience
+- **Ceremonial Entry**: An animated, multi-step induction form that feels like a sacred rite.
+- **Tree of Life Dashboard**: An interactive SVG visualization of the 10 Sefirot, serving as the user's navigational hub.
+- **Daily Gate**: A meditative interface for scanning the Zohar text, revealing spiritual light.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔊 The Sensory Layer
+- **Audio Engine**: Real-time synthesis using the **Web Audio API**.
+- **Solfeggio Frequencies**: 
+  - **432 Hz** (Nature/Verdict) during Ceremony.
+  - **528 Hz** (Miracle/DNA Repair) in the Dashboard.
+  - **396 Hz** (Liberation) on entry.
+- **Ethereal Pad**: Multi-oscillator design with LFO modulation for organic, breathing soundscapes.
 
-## Learn More
+### 🤖 Spiritual AI
+- **Oracle Chatbot**: A RAG-simulated AI interface that provides Kabbalistic wisdom on demand.
+- **Soul Book**: Generates a personalized PDF report of the user's spiritual profile.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Technology Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Framework**: Next.js 15+ (App Router)
+- **Language**: TypeScript
+- **Styling**: Vanilla CSS Modules (No TailwindCSS - Pure Design)
+- **Animations**: Framer Motion
+- **Database**: Supabase (PostgreSQL)
+- **Deployment**: Vercel / GitHub Actions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Getting Started
 
-## Deploy on Vercel
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/JesusGalindez/kabbalah-portal.git
+   cd kabbalah-portal
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+## 📜 License
+
+Private & Sacred. Built for the Seeker.
