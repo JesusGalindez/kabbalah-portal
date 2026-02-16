@@ -10,7 +10,11 @@ export default function Home() {
         <p className={styles.subtitle}>
           Premium. Transcendente. Versátil.
         </p>
+        <a href="/ceremony" className={styles.cta}>
+          Enter the Mystery
+        </a>
       </div>
+
     </main>
   );
 }
