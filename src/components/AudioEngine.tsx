@@ -39,51 +39,92 @@ export default function AudioEngine() {
         }
     };
 
-    const playSound = (freq: number, type: OscillatorType = 'sine') => {
+    const playSound = (freq: number) => {
         if (!audioContextRef.current || !gainNodeRef.current) return;
 
-        // Stop existing oscillators
+        // Stop existing oscillators cleanly
         stopOscillators();
 
-        const osc = audioContextRef.current.createOscillator();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioContextRef.current.currentTime);
+        const ctx = audioContextRef.current;
+        const now = ctx.currentTime;
+        const masterGain = gainNodeRef.current;
 
-        // Smooth transition
-        gainNodeRef.current.gain.cancelScheduledValues(audioContextRef.current.currentTime);
-        gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.1, audioContextRef.current.currentTime + 2); // Soft attack
+        // Master Filter (Low Pass) for softness
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now); // Soft cutoff
+        filter.Q.value = 1;
+        filter.connect(masterGain);
 
-        osc.connect(gainNodeRef.current);
-        osc.start();
-        oscillatorsRef.current.push(osc);
+        // Create 3 Oscillators for a "Pad" texture
+        // 1. Root
+        // 2. Lower Octave (Warmth)
+        // 3. Perfect Fifth (Harmony)
+        const frequencies = [freq, freq * 0.5, freq * 1.5];
+        const gains = [0.15, 0.1, 0.05]; // Mix levels
 
-        // Add a second harmonic for richness
-        const osc2 = audioContextRef.current.createOscillator();
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(freq * 1.5, audioContextRef.current.currentTime); // Perfect fifth
-        const gain2 = audioContextRef.current.createGain();
-        gain2.gain.value = 0.05;
-        gain2.connect(audioContextRef.current.destination);
-        osc2.connect(gain2);
-        osc2.start();
-        oscillatorsRef.current.push(osc2);
+        frequencies.forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+
+            osc.type = i === 1 ? 'triangle' : 'sine'; // Use triangle for bass warmth
+            osc.frequency.setValueAtTime(f, now);
+
+            // Detune slightly for "Chorus" effect
+            if (i === 0) osc.detune.setValueAtTime(2, now);
+            if (i === 2) osc.detune.setValueAtTime(-2, now);
+
+            // Connect graph
+            osc.connect(oscGain);
+            oscGain.connect(filter);
+
+            // Individual Envelope
+            oscGain.gain.setValueAtTime(0, now);
+            oscGain.gain.linearRampToValueAtTime(gains[i], now + 4); // Very slow attack (4s)
+
+            osc.start();
+            oscillatorsRef.current.push(osc);
+        });
+
+        // LFO for "Breathing" (Tremolo)
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 0.1; // 10 seconds per breath
+        lfoGain.gain.value = 0.05; // Subtle depth
+
+        lfo.connect(masterGain.gain);
+        lfo.start();
+        oscillatorsRef.current.push(lfo);
+
+        // Master Gain Fade In
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(0, now);
+        masterGain.gain.linearRampToValueAtTime(0.5, now + 4);
     };
 
     const stopOscillators = () => {
+        if (!audioContextRef.current) return;
         oscillatorsRef.current.forEach(osc => {
             try {
-                osc.stop();
-                osc.disconnect();
-            } catch (e) { /* ignore already stopped */ }
+                // Ramp down gently before stopping
+                // Note: Direct node manipulation here is tricky with React refs, 
+                // relying on MasterGain fade out in stopSound is safer.
+                osc.stop(audioContextRef.current.currentTime + 2);
+            } catch (e) { /* ignore */ }
         });
         oscillatorsRef.current = [];
     };
 
     const stopSound = () => {
         if (gainNodeRef.current && audioContextRef.current) {
-            gainNodeRef.current.gain.exponentialRampToValueAtTime(0.0001, audioContextRef.current.currentTime + 1);
-            setTimeout(() => stopOscillators(), 1000);
+            const now = audioContextRef.current.currentTime;
+            gainNodeRef.current.gain.cancelScheduledValues(now);
+            gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, now);
+            gainNodeRef.current.gain.exponentialRampToValueAtTime(0.001, now + 3); // 3s release
+
+            setTimeout(() => {
+                stopOscillators();
+            }, 3000);
         } else {
             stopOscillators();
         }
@@ -96,18 +137,19 @@ export default function AudioEngine() {
         // 432 Hz = Verdict/Nature (Ceremony)
         // 528 Hz = DNA Repair/Miracle (Dashboard)
         // 396 Hz = Liberating Guilt (Home/Intro)
+        // 639 Hz = Connection (Daily Gate)
 
-        if (pathname === '/ceremony') {
-            playSound(432);
-        } else if (pathname === '/dashboard') {
-            playSound(528);
-        } else {
-            playSound(396); // Root
-        }
+        let freq = 396;
+        if (pathname === '/ceremony') freq = 432;
+        if (pathname === '/dashboard') freq = 528;
+        // if (pathname === '/daily-gate') freq = 639;
+
+        playSound(freq);
     };
 
     const toggleAudio = async () => {
         initAudio();
+        if (!audioContextRef.current) return;
         if (audioContextRef.current?.state === 'suspended') {
             await audioContextRef.current.resume();
         }
