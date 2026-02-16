@@ -1,0 +1,77 @@
+
+> kabbalah-portal@0.1.0 lint
+> eslint
+
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/app/api/chat/route.ts
+  32:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/app/global-error.tsx
+  7:5  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/components/AudioEngine.tsx
+  19:13  error    Error: Cannot access variable before it is declared
+
+`stopSound` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/components/AudioEngine.tsx:19:13
+  17 |         // Initialize Audio Context on first user interaction (handled by toggle)
+  18 |         return () => {
+> 19 |             stopSound();
+     |             ^^^^^^^^^ `stopSound` accessed before it is declared
+  20 |             if (audioContextRef.current) {
+  21 |                 audioContextRef.current.close();
+  22 |             }
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/components/AudioEngine.tsx:117:5
+  115 |     };
+  116 |
+> 117 |     const stopSound = () => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 118 |         if (gainNodeRef.current && audioContextRef.current) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 119 |             const now = audioContextRef.current.currentTime;
+      …
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 129 |         }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 130 |     };
+      | ^^^^^^^ `stopSound` is declared here
+  131 |
+  132 |     const updateFrequency = () => {
+  133 |         if (!audioContextRef.current) return;  react-hooks/immutability
+  24:8   warning  React Hook useEffect has a missing dependency: 'stopSound'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+  28:13  error    Error: Cannot access variable before it is declared
+
+`updateFrequency` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/components/AudioEngine.tsx:28:13
+  26 |     useEffect(() => {
+  27 |         if (isPlaying && !isMuted) {
+> 28 |             updateFrequency();
+     |             ^^^^^^^^^^^^^^^ `updateFrequency` accessed before it is declared
+  29 |         }
+  30 |     }, [pathname, isPlaying, isMuted]);
+  31 |
+
+/Users/albertogalindez/.gemini/Antigravity/playground/Kabbalah/src/components/AudioEngine.tsx:132:5
+  130 |     };
+  131 |
+> 132 |     const updateFrequency = () => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 133 |         if (!audioContextRef.current) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 134 |
+      …
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 146 |         playSound(freq);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 147 |     };
+      | ^^^^^^^ `updateFrequency` is declared here
+  148 |
+  149 |     const toggleAudio = async () => {
+  150 |         initAudio();                                                                                                                                                                                                   react-hooks/immutability
+  30:8   warning  React Hook useEffect has a missing dependency: 'updateFrequency'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/exhaustive-deps
+
+✖ 6 problems (2 errors, 4 warnings)
+

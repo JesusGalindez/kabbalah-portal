@@ -13,21 +13,6 @@ export default function AudioEngine() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
 
-    useEffect(() => {
-        // Initialize Audio Context on first user interaction (handled by toggle)
-        return () => {
-            stopSound();
-            if (audioContextRef.current) {
-                audioContextRef.current.close();
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        if (isPlaying && !isMuted) {
-            updateFrequency();
-        }
-    }, [pathname, isPlaying, isMuted]);
 
     const initAudio = () => {
         if (!audioContextRef.current) {
@@ -145,6 +130,22 @@ export default function AudioEngine() {
 
         playSound(freq);
     };
+
+    useEffect(() => {
+        // Initialize Audio Context on first user interaction (handled by toggle)
+        return () => {
+            stopSound();
+            if (audioContextRef.current) {
+                audioContextRef.current.close();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isPlaying && !isMuted) {
+            updateFrequency();
+        }
+    }, [pathname, isPlaying, isMuted]);
 
     const toggleAudio = async () => {
         initAudio();

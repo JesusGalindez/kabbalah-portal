@@ -7,11 +7,11 @@ declare module 'hebcal' {
         getFullYear(): number;
         greg(): Date;
         getMonthName(): string;
-        static getHolidaysOnDate(hDate: HDate): any[];
+        static getHolidaysOnDate(hDate: HDate): unknown[];
     }
 
     export class HebrewCalendar {
-        static getHolidaysOnDate(hDate: HDate): any[];
+        static getHolidaysOnDate(hDate: HDate): unknown[];
     }
 
     export class Location {

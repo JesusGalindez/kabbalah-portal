@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         return NextResponse.json({ reply: response });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ reply: "The connection to the upper worlds is currently cloudy. Try again." }, { status: 500 });
     }
 }

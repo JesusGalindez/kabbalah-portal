@@ -4,7 +4,6 @@
 import styles from './error.module.css';
 
 export default function GlobalError({
-    error,
     reset,
 }: {
     error: Error & { digest?: string };
