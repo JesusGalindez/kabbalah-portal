@@ -1,4 +1,4 @@
-import { HDate, HebrewCalendar } from 'hebcal'; // Verify if these are named exports. Often hebcal is 'require' based or has different exports.
+import { HDate } from 'hebcal';
 // If typical ESM fail, might need: import hebcal from 'hebcal'; const { HDate } = hebcal;
 
 
@@ -16,8 +16,9 @@ export function getHebrewDate(date: Date): HebrewDateInfo {
     const hDate = new HDate(date);
 
     // Get holidays for this date if any
-    const holidays = HebrewCalendar.getHolidaysOnDate(hDate) || [];
-    const holidayNames = holidays.map(h => h.desc);
+    // Based on hebcal API, holidays() is a method on the HDate instance
+    const holidays = hDate.holidays() || [];
+    const holidayNames = holidays.map(h => typeof h === 'string' ? h : h.desc);
 
     return {
         day: hDate.getDate(),
