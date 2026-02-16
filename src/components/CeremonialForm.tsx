@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { getHebrewDate, HebrewDateInfo } from '@/lib/kabbalah/date-converter';
 import { getTikkun, TikkunInfo } from '@/lib/kabbalah/tikkun';
 import styles from './CeremonialForm.module.css';
@@ -102,7 +103,9 @@ export default function CeremonialForm() {
                                 {/* <p>Correction: {results.tikkun.correction}</p> */}
                             </div>
                         )}
-                        <button className={styles.nextButton} style={{ marginTop: '2rem' }} onClick={() => alert("Dashboard coming soon...")}>Enter the Tree</button>
+                        <Link href="/dashboard" className={styles.nextButton} style={{ marginTop: '2rem', textDecoration: 'none', display: 'inline-block' }}>
+                            Enter the Tree
+                        </Link>
                     </motion.div>
                 )}
             </AnimatePresence>
